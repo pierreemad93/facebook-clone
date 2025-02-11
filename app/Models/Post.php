@@ -33,7 +33,7 @@ class Post extends Model
     public function scopeFilterByStatus(Builder $query, $status = null)
     {
         if (!empty($status)) {
-            return $query->orWhere('status', $status);
+            return $query->where('status', $status);
         }
         return $query;
     }

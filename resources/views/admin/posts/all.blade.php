@@ -1,9 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Posts') }}
-            <a class="btn btn-neutral" href="{{ route('admin.posts.create') }}">{{ __('addPost') }}</a>
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight flex-grow">
+                {{ __('Posts') }}
+            </h2>
+            <a class="btn btn-neutral px-4 py-2" href="{{ route('admin.posts.create') }}">
+                {{ __('addPost') }}
+            </a>
+        </div>
     </x-slot>
 
     <div class="py-12" x-data="postSearch()">
@@ -11,21 +15,22 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="overflow-x-auto">
-                        {{-- البحث عن المنشورات --}}
-                        <div class="join w-full">
-                            <div>
-                                <input x-model="query" class="input input-bordered join-item" placeholder="Search"
-                                    @input.debounce.500ms="search" />
+                        {{-- search bar and filter --}}
+                        <div class="join flex">
+                            <div class="flex-1">
+                                <input x-model="query" class="input input-bordered join-item w-full"
+                                    placeholder="Search" @input.debounce.500ms="search" />
                             </div>
-                            <select x-model="filter" class="select select-bordered join-item">
+                            <select x-model="filter" class="select select-bordered join-item flex-1">
 
-                                <option value="">{{ __('All') }}</option>
+                                <option value="">{{ __('Status') }}</option>
                                 <option value="active">{{ __('active') }}</option>
                                 <option value="pending">{{ __('pending') }}</option>
                                 <option value="suspended">{{ __('suspended') }}</option>
                             </select>
 
                         </div>
+                        {{-- all posts --}}
                         <div class="divider"></div>
                         <table class="table">
                             <thead>
@@ -33,6 +38,7 @@
                                     <th>#</th>
                                     <th>{{ __('addedBy') }}</th>
                                     <th>{{ __('content') }}</th>
+                                    <th>{{ __('status') }}</th>
                                     <th>{{ __('views') }}</th>
                                     <th>{{ __('control') }}</th>
                                 </tr>
@@ -43,6 +49,15 @@
                                         <th x-text="index + 1"></th>
                                         <td x-text="post.user.name"></td>
                                         <td x-text="post.content"></td>
+                                        <td>
+                                            <span x-text="post.status"
+                                                x-bind:class="{
+                                                    'text-green-600 font-bold': post.status === 'active',
+                                                    'text-yellow-600 font-bold': post.status === 'pending',
+                                                    'text-red-600 font-bold': post.status === 'suspended'
+                                                }">
+                                            </span>
+                                        </td>
                                         <td x-text="post.views"></td>
                                         <td>
                                             <a :href="`/admin/posts/${post.id}/edit`"
