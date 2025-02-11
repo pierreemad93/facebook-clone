@@ -1,12 +1,16 @@
 <?php
 
-use App\Http\Controllers\Admin\PostController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\PostController as AdminPosts;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth')->group(function () {
+    Route::get('/', HomeController::class)->name('homepage');
+    Route::post('/post', [PostController::class, 'store'])->name('posts.store');
 });
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
@@ -17,8 +21,8 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.
 
 Route::prefix('admin')->middleware('auth')->as('admin.')->group(function () {
     //post
-    Route::get('posts/search', [PostController::class, 'search'])->name('posts.search');
-    Route::resource('posts', PostController::class);
+    Route::get('posts/search', [AdminPosts::class, 'search'])->name('posts.search');
+    Route::resource('posts', AdminPosts::class);
 });
 
 
